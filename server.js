@@ -21,7 +21,6 @@ app.use(express.static('./build'))
 const io = socketio(server)
 io.on('connection', (socket) => {
 	socket.on('waiting', () => {
-		console.log("waiting...")
 		socket.join('waitingRoom')
 
 		const waitingClients = io.sockets.adapter.rooms.get('waitingRoom')
@@ -48,9 +47,11 @@ io.on('connection', (socket) => {
 		}
 	})
 
-	socket.on('randomCode', ({ id1, id2, code }) => {
+	socket.on('randomCode', ({ id1, id2, id3, id4, code }) => {
 		id1 && io.sockets.sockets.get(id1).emit('randomCode', { code: code })
 		id2 && io.sockets.sockets.get(id2).emit('randomCode', { code: code })
+		id3 && io.sockets.sockets.get(id3).emit('randomCode', { code: code })
+		id4 && io.sockets.sockets.get(id4).emit('randomCode', { code: code })
 	})
 
 	socket.on('join', (payload, callback) => {
@@ -58,7 +59,7 @@ io.on('connection', (socket) => {
 
 		const { error, newUser } = addUser({
 			id: socket.id,
-			name: numberOfUsersInRoom === 0 ? 'Player 1' : 'Player 2',
+			name: numberOfUsersInRoom === 0 ? 'Player 1' : numberOfUsersInRoom === 1 ? 'Player 2' : numberOfUsersInRoom === 2 ? 'Player 3' : 'Player 4',
 			room: payload.room,
 		})
 
